@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link rel="stylesheet" href="login-style.css">
+  <!-- Font Awesome for Eye Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Page Container -->
+  <div class="login-page-container">
+    <!-- Left Section -->
+    <div class="login-left-section">
+      <div class="logo-container">
+        <h1>Welcome</h1>
+        <p>Create your account to get started!</p>
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="login-right-section">
+      <h2>Register</h2>
+      <form action="/register" method="POST" class="login-form-container">
+  <!-- Name and Email (Side by Side) -->
+  <div class="form-group">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="Name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="Email" required>
+  </div>
+
+  <!-- Password -->
+  <div class="form-group">
+    <label for="password">Password:</label>
+    <div class="password-container">
+      <input type="password" id="password" name="Password" required>
+      <i class="fas fa-eye" id="togglePassword"></i>
+    </div>
+  </div>
+
+  <!-- Role -->
+  <div class="form-group">
+    <label for="role">Role:</label>
+    <select id="role" name="Role" required>
+      <option value="Procurement Manager">Procurement Manager</option>
+      <option value="Contract Team">Contract Team</option>
+      <option value="Vendor Team">Vendor Team</option>
+      <option value="Department Head">Department Head</option>
+      <option value="Finance Team">Finance Team</option>
+      <option value="Vendor">Vendor</option>
+    </select>
+  </div>
+
+  <!-- Vendor-specific fields -->
+  <div id="vendorFields" class="hidden">
+    <div class="form-group">
+      <label for="vendorName">Vendor Name:</label>
+      <input type="text" id="vendorName" name="VendorName" placeholder="Enter Vendor Name">
+    </div>
+    <div class="form-group">
+      <label for="serviceCategory">Service Category:</label>
+      <input type="text" id="serviceCategory" name="ServiceCategory" placeholder="Enter Service Category">
+    </div>
+    <div class="form-group">
+      <label for="contactEmail">Contact Email:</label>
+      <input type="email" id="contactEmail" name="ContactEmail" placeholder="Enter Contact Email">
+    </div>
+    <div class="form-group">
+      <label for="contactPhone">Contact Phone:</label>
+      <input type="text" id="contactPhone" name="ContactPhone" placeholder="Enter Contact Phone">
+    </div>
+    <div class="form-group">
+      <label for="address">Address:</label>
+      <input type="text" id="address" name="Address" placeholder="Enter Vendor Address">
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" class="login-submit-btn">Register</button>
+</form>
+
+    </div>
+  </div>
+
+  <script>
+    // Get the role selection element and vendor fields container
+    const roleSelect = document.getElementById("role");
+    const vendorFields = document.getElementById("vendorFields");
+
+    // Function to show/hide vendor fields based on role selection
+    roleSelect.addEventListener("change", function() {
+      if (roleSelect.value === "Vendor") {
+        vendorFields.style.display = "block"; // Show vendor fields
+      } else {
+        vendorFields.style.display = "none"; // Hide vendor fields
+      }
+    });
+
+    // Initial check for the default value (if needed)
+    if (roleSelect.value === "Vendor") {
+      vendorFields.style.display = "block"; // Show vendor fields if "Vendor" is selected
+    }
+
+    // Toggle password visibility with the eye icon
+    const togglePassword = document.getElementById("togglePassword");
+    const passwordField = document.getElementById("password");
+
+    togglePassword.addEventListener("click", function() {
+      // Toggle the type attribute
+      const type = passwordField.type === "password" ? "text" : "password";
+      passwordField.type = type;
+
+      // Toggle the eye icon
+      this.classList.toggle("fa-eye-slash");
+    });
+  </script>
+</body>
+</html>

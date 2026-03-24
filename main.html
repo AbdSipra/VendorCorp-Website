@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vendor Dashboard</title>
+    <link rel="stylesheet" href="main-style.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Vendor Management</a></li>
+          <li><a href="#">Contracts</a></li>
+          <li><a href="#">Purchase Orders</a></li>
+          <li><a href="#">Budget Tracking</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="welcome.html" class="logout">Logout</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div class="dashboard-container">
+      <!-- Vendor Performance Widget -->
+      <div class="widget">
+        <h3>Vendor Performance</h3>
+        <p>Average Rating: 85%</p>
+        <!-- Placeholder for actual chart -->
+        <div class="chart">
+          <canvas id="vendorPerformanceChart"></canvas>
+        </div>
+
+        <button>View Vendors</button>
+      </div>
+
+      <!-- Contract Overview Widget -->
+      <div class="widget">
+        <h3>Contract Overview</h3>
+        <p>Expiring Soon: 5 contracts</p>
+        <!-- Placeholder for actual chart -->
+        <div class="chart">
+          <canvas id="vendorPerformanceChart"></canvas>
+        </div>
+        <button>Manage Contracts</button>
+      </div>
+
+      <!-- Purchase Orders Widget -->
+      <div class="widget">
+        <h3>Purchase Orders</h3>
+        <p>Pending Orders: 3</p>
+        <!-- Placeholder for actual chart -->
+        <div class="chart">
+          <canvas id="vendorPerformanceChart"></canvas>
+        </div>
+        <button>View Orders</button>
+      </div>
+
+      <!-- Budget Overview Widget -->
+      <div class="widget">
+        <h3>Budget Overview</h3>
+        <p>Total Budget: $500,000</p>
+        <!-- Placeholder for actual chart -->
+        <div class="chart">
+          <canvas id="vendorPerformanceChart"></canvas>
+        </div>
+        <button>Manage Budget</button>
+      </div>
+
+      <!-- Alerts Widget -->
+      <div class="widget">
+        <h3>Alerts</h3>
+        <p>Contract Renewal Alert: Vendor X</p>
+        <button>View Alerts</button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

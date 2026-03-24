@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procurement Manager Dashboard</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #5cb8ff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    p {
+      margin: 10px 0;
+      font-size: 1.1rem;
+    }
+
+    main {
+      margin: 20px;
+    }
+
+    section {
+      margin-bottom: 40px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #5cb8ff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 0.9rem;
+    }
+
+    button:hover {
+      background-color: #4a9ce1;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #5cb8ff;
+      color: white;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to the Procurement Manager Dashboard</h1>
+    <p>Manage procurement activities, oversee contracts, and monitor vendor performance.</p>
+  </header>
+
+  <main>
+    <!-- Vendor Management Section -->
+    <section>
+      <h2>Vendor Management</h2>
+      <button onclick="toggleTable('vendorTable', fetchVendors)">Active Vendors</button>
+      <table id="vendorTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Vendor ID</th>
+            <th>Vendor Name</th>
+            <th>Service Category</th>
+            <th>Contact Email</th>
+            <th>Contact Phone</th>
+            <th>Address</th>
+            <th>Compliance Certifications</th>
+            <th>Performance Rating</th>
+            <th>Registration Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Add New Vendor</h3>
+      <form id="addVendorForm">
+        <label for="VendorName">Vendor Name:</label>
+        <input type="text" id="VendorName" required>
+        <label for="ServiceCategory">Service Category:</label>
+        <input type="text" id="ServiceCategory" required>
+        <label for="ContactEmail">Contact Email:</label>
+        <input type="email" id="ContactEmail" required>
+        <label for="ContactPhone">Contact Phone:</label>
+        <input type="text" id="ContactPhone" required>
+        <label for="Address">Address:</label>
+        <input type="text" id="Address" required>
+        <label for="ComplianceCertifications">Compliance Certifications:</label>
+        <input type="text" id="ComplianceCertifications">
+        <label for="PerformanceRating">Performance Rating:</label>
+        <input type="number" id="PerformanceRating" min="0" max="5" step="0.1">
+        <label for="Password">Password:</label>
+        <input type="password" id="Password" required>
+        <button type="submit">Add Vendor</button>
+      </form>
+    </section>
+
+    <!-- Purchase Orders Section -->
+    <section>
+      <section>
+        <h2>Purchase Orders</h2>
+        <button onclick="toggleTable('poTable', fetchPurchaseOrders)">Purchase Orders</button>
+        <table id="poTable" style="display: none;">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Vendor ID</th>
+              <th>Created By</th>
+              <th>Department ID</th>
+              <th>Item Details</th>
+              <th>Total Cost</th>
+              <th>Status</th>
+              <th>Budget Approved</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+      
+      <script>
+        function fetchPurchaseOrders() {
+          fetch("/procurement/purchase-orders")
+            .then((response) => {
+              if (!response.ok) throw new Error("Failed to fetch purchase orders.");
+              return response.json();
+            })
+            .then((orders) => {
+              const tableBody = document.querySelector("#poTable tbody");
+              tableBody.innerHTML = orders.length
+                ? orders
+                    .map(
+                      (order) => `
+                      <tr>
+                        <td>${order.ID || "N/A"}</td>
+                        <td>${order.VendorID || "N/A"}</td>
+                        <td>${order.CreatedBy || "N/A"}</td>
+                        <td>${order.DepartmentID || "N/A"}</td>
+                        <td>${order.ItemDetails || "N/A"}</td>
+                        <td>${order.TotalCost || "N/A"}</td>
+                        <td>${order.Status || "N/A"}</td>
+                        <td>${order.BudgetApproved ? "Yes" : "No"}</td>
+                        <td>${order.CreatedAt || "N/A"}</td>
+                        <td>${order.UpdatedAt || "N/A"}</td>
+                      </tr>
+                    `
+                    )
+                    .join("")
+                : `<tr><td colspan="10" class="no-data">No purchase orders found.</td></tr>`;
+            })
+            .catch((error) => console.error("Error fetching purchase orders:", error));
+        }
+      </script>
+      
+      
+
+      <h3>Update Purchase Order Status</h3>
+      <form id="updatePOForm">
+        <label for="POID">PO ID:</label>
+        <input type="text" id="POID" required>
+        <label for="OrderStatus">Status:</label>
+        <select id="OrderStatus">
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+        <button type="submit">Update Status</button>
+      </form>
+    </section>
+
+    <!-- Contracts Section -->
+    <section>
+      <h2>Contracts</h2>
+      <button onclick="toggleTable('contractTable', fetchContracts)">Active Contracts</button>
+      <table id="contractTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Contract ID</th>
+            <th>Vendor ID</th>
+            <th>Created By</th>
+            <th>Department ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Terms</th>
+            <th>Clauses</th>
+            <th>Renewal Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Initiate New Contract</h3>
+      <form id="addContractForm">
+        <label for="VendorID">Vendor ID:</label>
+        <input type="text" id="VendorID" required>
+        <label for="CreatedBy">Created By:</label>
+        <input type="text" id="CreatedBy" required>
+        <label for="DepartmentID">Department ID:</label>
+        <input type="text" id="DepartmentID" required>
+        <label for="StartDate">Start Date:</label>
+        <input type="date" id="StartDate" required>
+        <label for="EndDate">End Date:</label>
+        <input type="date" id="EndDate" required>
+        <label for="TermsAndConditions">Terms and Conditions:</label>
+        <textarea id="TermsAndConditions"></textarea>
+        <label for="SpecialClauses">Special Clauses:</label>
+        <textarea id="SpecialClauses"></textarea>
+        <label for="RenewalDate">Renewal Date:</label>
+        <input type="date" id="RenewalDate">
+        <button type="submit">Initiate Contract</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function toggleTable(tableId, fetchFunction) {
+      const table = document.getElementById(tableId);
+      table.style.display = table.style.display === "none" ? "table" : "none";
+      if (table.style.display === "table") fetchFunction();
+    }
+
+    function fetchVendors() {
+      fetch("/procurement/vendors")
+        .then(res => res.json())
+        .then(vendors => {
+          const tbody = document.querySelector("#vendorTable tbody");
+          tbody.innerHTML = vendors.length
+            ? vendors.map(v => `
+                <tr>
+                  <td>${v.VendorID}</td>
+                  <td>${v.VendorName}</td>
+                  <td>${v.ServiceCategory}</td>
+                  <td>${v.ContactEmail}</td>
+                  <td>${v.ContactPhone}</td>
+                  <td>${v.Address}</td>
+                  <td>${v.ComplianceCertifications || "N/A"}</td>
+                  <td>${v.PerformanceRating}</td>
+                  <td>${v.RegistrationDate}</td>
+                </tr>
+              `).join("")
+            : `<tr><td colspan="9" class="no-data">No vendors found.</td></tr>`;
+        });
+    }
+
+    function fetchPurchaseOrders() {
+      fetch("/procurement/purchase-orders")
+        .then(res => res.json())
+        .then(orders => {
+          const tbody = document.querySelector("#poTable tbody");
+          tbody.innerHTML = orders.length
+            ? orders.map(o => `
+                <tr>
+                  <td>${o.POID}</td>
+                  <td>${o.VendorID}</td>
+                  <td>${o.DateCreated}</td>
+                  <td>${o.TotalAmount}</td>
+                  <td>${o.OrderStatus}</td>
+                </tr>
+              `).join("")
+            : `<tr><td colspan="5" class="no-data">No purchase orders found.</td></tr>`;
+        });
+    }
+
+    function fetchContracts() {
+      fetch("/procurement/contracts")
+        .then(res => res.json())
+        .then(contracts => {
+          const tbody = document.querySelector("#contractTable tbody");
+          tbody.innerHTML = contracts.length
+            ? contracts.map(c => `
+                <tr>
+                  <td>${c.ContractID}</td>
+                  <td>${c.VendorID}</td>
+                  <td>${c.CreatedBy}</td>
+                  <td>${c.DepartmentID}</td>
+                  <td>${c.StartDate}</td>
+                  <td>${c.EndDate}</td>
+                  <td>${c.TermsAndConditions || "N/A"}</td>
+                  <td>${c.SpecialClauses || "N/A"}</td>
+                  <td>${c.RenewalDate || "N/A"}</td>
+                </tr>
+              `).join("")
+            : `<tr><td colspan="9" class="no-data">No contracts found.</td></tr>`;
+        });
+    }
+
+    document.getElementById("addVendorForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        VendorName: document.getElementById("VendorName").value,
+        ServiceCategory: document.getElementById("ServiceCategory").value,
+        ContactEmail: document.getElementById("ContactEmail").value,
+        ContactPhone: document.getElementById("ContactPhone").value,
+        Address: document.getElementById("Address").value,
+        ComplianceCertifications: document.getElementById("ComplianceCertifications").value,
+        PerformanceRating: document.getElementById("PerformanceRating").value,
+        Password: document.getElementById("Password").value,
+      };
+
+      fetch("/procurement/vendors/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then(res => res.json())
+        .then(response => {
+          alert(response.message || "Vendor added successfully!");
+          fetchVendors();
+        })
+        .catch(error => console.error("Error adding vendor:", error));
+    });
+
+    document.getElementById("updatePOForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        POID: document.getElementById("POID").value,
+        OrderStatus: document.getElementById("OrderStatus").value,
+      };
+
+      fetch("/procurement/purchase-orders/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then(res => res.json())
+        .then(response => {
+          alert(response.message || "Purchase Order updated successfully!");
+          fetchPurchaseOrders();
+        })
+        .catch(error => console.error("Error updating purchase order:", error));
+    });
+
+    document.getElementById("addContractForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const data = {
+        VendorID: document.getElementById("VendorID").value,
+        CreatedBy: document.getElementById("CreatedBy").value,
+        DepartmentID: document.getElementById("DepartmentID").value,
+        StartDate: document.getElementById("StartDate").value,
+        EndDate: document.getElementById("EndDate").value,
+        TermsAndConditions: document.getElementById("TermsAndConditions").value,
+        SpecialClauses: document.getElementById("SpecialClauses").value,
+        RenewalDate: document.getElementById("RenewalDate").value,
+      };
+
+      fetch("/procurement/contracts/new", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then(res => res.json())
+        .then(response => {
+          alert(response.message || "Contract initiated successfully!");
+          fetchContracts();
+        })
+        .catch(error => console.error("Error initiating contract:", error));
+    });
+  </script>
+</body>
+</html>

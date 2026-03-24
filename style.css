@@ -1,0 +1,128 @@
+/* Reset some default styles */
+body,
+ul,
+li,
+h1,
+h2,
+p {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Container to hold both sections */
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Left Section Styling */
+.left-section {
+  background-color: #5cb8ff; /* Light blue color */
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.logo-container h1 {
+  font-size: 3em;
+  margin: 10px 0;
+}
+
+.logo-container p {
+  font-size: 1.2em;
+  margin: 5px 0;
+}
+
+/* Right Section Styling */
+.right-section {
+  width: 50%;
+  background-color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  padding: 20px;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #5bc0eb;
+}
+
+/* Welcome Content Styling */
+.welcome-content {
+  margin-top: 50px;
+}
+
+.welcome-content h2 {
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.welcome-content p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.contact-info p {
+  color: #333;
+  margin-bottom: 120px;
+}
+
+.social-icons a {
+  color: #333;
+  margin-right: 10px;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.social-icons a:hover {
+  color: #5cb8ff;
+}
+
+/* Login/Signup Button Styling */
+.login-btn {
+  background-color: #5cb8ff; /* Button background color */
+  color: white; /* Text color */
+  padding: 10px 20px; /* Padding for size */
+  border: none;
+  border-radius: 5px; /* Rounded corners */
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 39px; /* Space between button and navigation links */
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #3498db; /* Hover color */
+}

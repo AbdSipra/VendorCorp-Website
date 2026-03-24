@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Team Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #5cb8ff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    section {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    button {
+      margin-bottom: 20px;
+      padding: 10px 15px;
+      background-color: #5cb8ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #5cb8ff;
+      color: white;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vendor Team Dashboard</h1>
+    <p>Manage vendors, purchase orders, and tasks efficiently.</p>
+  </header>
+
+  <main>
+    <!-- Vendors Section -->
+    <section>
+      <h2>Vendors</h2>
+      <button onclick="toggleTable('vendorTable', fetchVendors)">Toggle Vendors</button>
+      <table id="vendorTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Vendor ID</th>
+            <th>Name</th>
+            <th>Service Category</th>
+            <th>Contact Email</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Compliance</th>
+            <th>Rating</th>
+            <th>Registered</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Update Vendor</h3>
+      <form id="updateVendorForm">
+        <label for="VendorID">Vendor ID:</label>
+        <input type="text" id="VendorID" name="VendorID" required placeholder="Enter Vendor ID to update">
+
+        <label for="VendorName">Name:</label>
+        <input type="text" id="VendorName" name="VendorName" placeholder="Enter new vendor name">
+
+        <label for="ServiceCategory">Service Category:</label>
+        <input type="text" id="ServiceCategory" name="ServiceCategory" placeholder="Enter service category">
+
+        <label for="ContactEmail">Email:</label>
+        <input type="email" id="ContactEmail" name="ContactEmail" placeholder="Enter contact email">
+
+        <label for="ContactPhone">Phone:</label>
+        <input type="text" id="ContactPhone" name="ContactPhone" placeholder="Enter contact phone">
+
+        <label for="Address">Address:</label>
+        <input type="text" id="Address" name="Address" placeholder="Enter vendor address">
+
+        <label for="ComplianceCertifications">Compliance Certifications:</label>
+        <input type="text" id="ComplianceCertifications" name="ComplianceCertifications" placeholder="Enter certifications">
+
+        <label for="PerformanceRating">Performance Rating:</label>
+        <input type="number" id="PerformanceRating" name="PerformanceRating" placeholder="Enter performance rating">
+
+        <button type="submit">Update Vendor</button>
+      </form>
+    </section>
+
+    <!-- Purchase Orders Section -->
+    <section>
+      <h2>Purchase Orders</h2>
+      <button onclick="toggleTable('poTable', fetchPurchaseOrders)">Toggle Purchase Orders</button>
+      <table id="poTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>PO ID</th>
+            <th>Vendor ID</th>
+            <th>Created By</th>
+            <th>Item Details</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+            <th>Budget Approved</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Create Purchase Order</h3>
+      <form id="createPOForm">
+        <label for="VendorID">Vendor ID:</label>
+        <input type="text" id="VendorID" name="VendorID" required>
+
+        <label for="ItemDetails">Item Details (JSON format):</label>
+        <textarea id="ItemDetails" name="ItemDetails" required placeholder='e.g. {"Item": "Laptop", "Quantity": 10}'></textarea>
+
+        <label for="TotalCost">Total Cost:</label>
+        <input type="number" id="TotalCost" name="TotalCost" required>
+
+        <button type="submit">Create Purchase Order</button>
+      </form>
+    </section>
+
+    <!-- Tasks Section -->
+    <section>
+      <h2>Tasks</h2>
+      <button onclick="toggleTable('taskTable', fetchTasks)">Toggle Tasks</button>
+      <table id="taskTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Task ID</th>
+            <th>Assigned To</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Related POID</th>
+            <th>Due Date</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <h3>Update Task Status</h3>
+      <form id="updateTaskForm">
+        <label for="TaskID">Task ID:</label>
+        <input type="text" id="TaskID" name="TaskID" required>
+
+        <label for="Status">Status:</label>
+        <select id="Status" name="Status" required>
+          <option value="In-Progress">In-Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+
+        <button type="submit">Update Task</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    function toggleTable(tableId, fetchFunction) {
+      const table = document.getElementById(tableId);
+      if (table.style.display === "none" || table.style.display === "") {
+        table.style.display = "table";
+        fetchFunction(); // Fetch data
+      } else {
+        table.style.display = "none";
+      }
+    }
+
+    function fetchVendors() {
+      fetch("/vendor-team/vendors")
+        .then((res) => res.json())
+        .then((vendors) => {
+          const tbody = document.querySelector("#vendorTable tbody");
+          tbody.innerHTML = vendors.length
+            ? vendors
+                .map(
+                  (v) => `
+            <tr>
+              <td>${v.VendorID}</td>
+              <td>${v.VendorName}</td>
+              <td>${v.ServiceCategory}</td>
+              <td>${v.ContactEmail}</td>
+              <td>${v.ContactPhone}</td>
+              <td>${v.Address}</td>
+              <td>${v.ComplianceCertifications || "N/A"}</td>
+              <td>${v.PerformanceRating}</td>
+              <td>${v.RegistrationDate}</td>
+            </tr>
+          `
+                )
+                .join("")
+            : `<tr><td colspan="9" class="no-data">No vendors found.</td></tr>`;
+        });
+    }
+
+    function fetchPurchaseOrders() {
+      fetch("/vendor-team/purchase-orders")
+        .then((res) => res.json())
+        .then((orders) => {
+          const tbody = document.querySelector("#poTable tbody");
+          tbody.innerHTML = orders.length
+            ? orders
+                .map(
+                  (o) => `
+            <tr>
+              <td>${o.POID}</td>
+              <td>${o.VendorID}</td>
+              <td>${o.CreatedBy}</td>
+              <td>${JSON.stringify(o.ItemDetails)}</td>
+              <td>${o.TotalCost}</td>
+              <td>${o.OrderStatus}</td>
+              <td>${o.BudgetApproved ? "Yes" : "No"}</td>
+              <td>${o.CreatedAt}</td>
+              <td>${o.UpdatedAt}</td>
+            </tr>
+          `
+                )
+                .join("")
+            : `<tr><td colspan="9" class="no-data">No purchase orders found.</td></tr>`;
+        });
+    }
+
+    function fetchTasks() {
+      fetch("/vendor-team/tasks")
+        .then((res) => res.json())
+        .then((tasks) => {
+          const tbody = document.querySelector("#taskTable tbody");
+          tbody.innerHTML = tasks.length
+            ? tasks
+                .map(
+                  (t) => `
+            <tr>
+              <td>${t.TaskID}</td>
+              <td>${t.AssignedTo}</td>
+              <td>${t.TaskDescription}</td>
+              <td>${t.Status}</td>
+              <td>${t.RelatedPOID || "N/A"}</td>
+              <td>${t.DueDate}</td>
+              <td>${t.CreatedAt}</td>
+            </tr>
+          `
+                )
+                .join("")
+            : `<tr><td colspan="7" class="no-data">No tasks found.</td></tr>`;
+        });
+    }
+
+    document.getElementById("updateVendorForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = Object.fromEntries(new FormData(event.target));
+      fetch("/vendor-team/vendors/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.message);
+          fetchVendors();
+        })
+        .catch((err) => console.error("Error:", err));
+    });
+
+    document.getElementById("createPOForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = Object.fromEntries(new FormData(event.target));
+      fetch("/vendor-team/purchase-orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.message);
+          fetchPurchaseOrders();
+        })
+        .catch((err) => console.error("Error:", err));
+    });
+
+    document.getElementById("updateTaskForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = Object.fromEntries(new FormData(event.target));
+      fetch("/vendor-team/tasks/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.message);
+          fetchTasks();
+        })
+        .catch((err) => console.error("Error:", err));
+    });
+  </script>
+</body>
+</html>

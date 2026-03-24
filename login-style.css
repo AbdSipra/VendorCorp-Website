@@ -1,0 +1,135 @@
+/* General Styling */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4; /* Light gray background for contrast */
+}
+
+/* Container for Login Page */
+.login-page-container {
+  display: flex;
+  height: 100vh;
+}
+
+/* Left Section Styling (Logo Side) */
+.login-left-section {
+  background-color: #5cb8ff; /* Same light blue as the welcome page */
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+}
+
+.logo-container h1 {
+  font-size: 3em;
+  margin: 10px 0;
+}
+
+.logo-container p {
+  font-size: 1.2em;
+  margin: 5px 0;
+}
+
+/* Right Section Styling (Form Side) */
+.login-right-section {
+  width: 50%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  position: relative;
+}
+
+/* Navigation Bar (Reuse from Welcome Page) */
+.navbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.navbar a:hover {
+  color: #5bc0eb;
+}
+
+/* Login Form Styling */
+.login-form-container {
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.login-form-container h2 {
+  font-size: 2.5em;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form-container input {
+  padding: 12px 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.login-form-container input:focus {
+  border-color: #5cb8ff;
+}
+
+/* Submit Button Styling */
+.login-submit-btn {
+  background-color: #5cb8ff;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.login-submit-btn:hover {
+  background-color: #3498db;
+}
+
+/* Additional Links Styling */
+.forgot-password {
+  margin-top: 10px;
+}
+
+.forgot-password a {
+  color: #5cb8ff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}

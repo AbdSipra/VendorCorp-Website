@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contract Dashboard</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+      header {
+        background-color: #5cb8ff;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+      }
+      main {
+        padding: 20px;
+      }
+      h2 {
+        color: #333;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #5cb8ff;
+        color: white;
+      }
+      button {
+        background-color: #5cb8ff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+      button:hover {
+        background-color: #4fa8e0;
+      }
+      form {
+        background-color: white;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+      .section-divider {
+        margin: 30px 0;
+        border-top: 2px solid #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Contract Dashboard</h1>
+      <p>
+        Here you can manage contracts, track their progress, and ensure
+        compliance with terms.
+      </p>
+    </header>
+    <main>
+      <!-- Add New Contract -->
+      <section>
+        <h2>Add New Contract</h2>
+        <form id="addContractForm">
+          <label for="vendorId">Vendor ID:</label>
+          <input type="text" id="vendorId" required />
+
+          <label for="createdBy">Created By:</label>
+          <input type="text" id="createdBy" required />
+
+          <label for="departmentId">Department ID:</label>
+          <input type="text" id="departmentId" required />
+
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate" required />
+
+          <label for="endDate">End Date:</label>
+          <input type="date" id="endDate" required />
+
+          <label for="termsAndConditions">Terms & Conditions:</label>
+          <textarea id="termsAndConditions"></textarea>
+
+          <label for="specialClauses">Special Clauses:</label>
+          <textarea id="specialClauses"></textarea>
+
+          <label for="renewalDate">Renewal Date:</label>
+          <input type="date" id="renewalDate" />
+
+          <button type="submit">Add Contract</button>
+        </form>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- View Contracts -->
+      <section>
+        <h2>View Active Contracts</h2>
+        <button onclick="fetchContracts()">Load Contracts</button>
+        <table>
+          <thead>
+            <tr>
+              <th>Contract ID</th>
+              <th>Vendor ID</th>
+              <th>Created By</th>
+              <th>Department ID</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Terms</th>
+              <th>Clauses</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="contractTable"></tbody>
+        </table>
+      </section>
+
+      <div class="section-divider"></div>
+
+      <!-- View Compliance -->
+      <section>
+        <h2>Compliance</h2>
+        <button onclick="fetchCompliance()">View Compliance</button>
+        <table>
+          <thead>
+            <tr>
+              <th>Contract ID</th>
+              <th>Vendor ID</th>
+              <th>Renewal Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="complianceTable"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      // Fetch All Contracts
+      function fetchContracts() {
+        fetch("/contract/contracts") // Fetch all contracts
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch contracts.");
+            return response.json();
+          })
+          .then((contracts) => {
+            const tableBody = document.getElementById("contractTable");
+            tableBody.innerHTML = "";
+            contracts.forEach((contract) => {
+              const row = `
+                <tr>
+                  <td>${contract.ContractID}</td>
+                  <td>${contract.VendorID}</td>
+                  <td>${contract.CreatedBy}</td>
+                  <td>${contract.DepartmentID}</td>
+                  <td>${contract.StartDate}</td>
+                  <td>${contract.EndDate}</td>
+                  <td>${contract.TermsAndConditions || "N/A"}</td>
+                  <td>${contract.SpecialClauses || "N/A"}</td>
+                  <td>
+                    <button onclick="editContract(${contract.ContractID})">Edit</button>
+                  </td>
+                </tr>
+              `;
+              tableBody.innerHTML += row;
+            });
+          })
+          .catch((err) => console.error("Error fetching contracts:", err));
+      }
+
+      // Add Contract
+      document.getElementById("addContractForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const newContract = {
+          VendorID: document.getElementById("vendorId").value,
+          CreatedBy: document.getElementById("createdBy").value,
+          DepartmentID: document.getElementById("departmentId").value,
+          StartDate: document.getElementById("startDate").value,
+          EndDate: document.getElementById("endDate").value,
+          TermsAndConditions: document.getElementById("termsAndConditions").value,
+          SpecialClauses: document.getElementById("specialClauses").value,
+          RenewalDate: document.getElementById("renewalDate").value,
+        };
+
+        fetch("/vendor/contracts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newContract),
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to add contract.");
+            return response.json();
+          })
+          .then((data) => {
+            alert(data.message || "Contract added successfully.");
+            fetchContracts(); // Reload contracts after adding
+          })
+          .catch((err) => console.error("Error adding contract:", err));
+      });
+
+      // Fetch Compliance
+      function fetchCompliance() {
+        fetch("/contract/compliance")
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to fetch compliance.");
+            return response.json();
+          })
+          .then((complianceData) => {
+            const tableBody = document.getElementById("complianceTable");
+            tableBody.innerHTML = "";
+            complianceData.forEach((compliance) => {
+              const row = `
+                <tr>
+                  <td>${compliance.ContractID}</td>
+                  <td>${compliance.VendorID}</td>
+                  <td>${compliance.RenewalDate || "N/A"}</td>
+                  <td>${compliance.IsActive ? "Active" : "Archived"}</td>
+                </tr>
+              `;
+              tableBody.innerHTML += row;
+            });
+          })
+          .catch((err) => console.error("Error fetching compliance:", err));
+      }
+
+      // Edit Contract
+      function editContract(contractID) {
+        const newStartDate = prompt("Enter new start date (YYYY-MM-DD):");
+        const newEndDate = prompt("Enter new end date (YYYY-MM-DD):");
+        const newTerms = prompt("Enter new terms and conditions:");
+        const newClauses = prompt("Enter new special clauses:");
+
+        if (!newStartDate || !newEndDate) {
+          alert("Start date and end date are required.");
+          return;
+        }
+
+        fetch(`/contract/edit/${contractID}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            StartDate: newStartDate,
+            EndDate: newEndDate,
+            TermsAndConditions: newTerms || "N/A",
+            SpecialClauses: newClauses || "N/A",
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to update contract.");
+            return response.json();
+          })
+          .then((data) => {
+            alert(data.message || "Contract updated successfully.");
+            fetchContracts(); // Reload contracts after editing
+          })
+          .catch((err) => console.error("Error updating contract:", err));
+      }
+    </script>
+  </body>
+</html>

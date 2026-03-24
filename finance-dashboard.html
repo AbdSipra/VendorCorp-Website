@@ -1,0 +1,286 @@
+finance-dashboard.html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finance Team Dashboard</title>
+    <style>
+      /* Basic styling */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        background-color: #5cb8ff;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+      }
+
+      p {
+        margin: 10px 0;
+        font-size: 1.1rem;
+      }
+
+      main {
+        margin: 20px;
+      }
+
+      section {
+        margin-bottom: 40px;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #ddd;
+      }
+
+      th,
+      td {
+        padding: 10px 15px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f1f1f1;
+        font-weight: bold;
+      }
+
+      td {
+        background-color: #fff;
+      }
+
+      button {
+        background-color: #5cb8ff;
+        color: white;
+        padding: 6px 12px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 0.9rem;
+      }
+
+      button:hover {
+        background-color: #4a9ce1;
+      }
+
+      .actions-cell {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .no-data {
+        text-align: center;
+        color: #888;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to the Finance Team Dashboard</h1>
+      <p>
+        Here you can manage budgets, view purchase orders, and generate
+        financial reports.
+      </p>
+    </header>
+
+    <main>
+      <section>
+        <h2>Budget Management</h2>
+        <!-- Budget Table -->
+        <table id="budgetTable">
+          <thead>
+            <tr>
+              <th>BudgetID</th>
+              <th>DepartmentID</th>
+              <th>Allocated Amount</th>
+              <th>Spent Amount</th>
+              <th>Remaining Amount</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be inserted dynamically -->
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Purchase Orders</h2>
+        <!-- Table to display purchase orders -->
+        <table id="purchaseOrderTable">
+          <thead>
+            <tr>
+              <th>PO ID</th>
+              <th>Vendor ID</th>
+              <th>Department ID</th>
+              <th>Total Cost</th>
+              <th>Order Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Purchase orders will be inserted here -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchBudgets(); // Fetch and display budgets when page is loaded
+
+        // Fetch and render budgets in the table
+        function fetchBudgets() {
+          fetch("/finance-team/budgets")
+            .then((response) => response.json())
+            .then((budgets) => {
+              const tableBody = document.querySelector("#budgetTable tbody");
+              tableBody.innerHTML = ""; // Clear existing rows
+
+              if (budgets.length === 0) {
+                tableBody.innerHTML =
+                  "<tr><td colspan='6' class='no-data'>No budgets available.</td></tr>";
+              } else {
+                budgets.forEach((budget) => {
+                  const row = `
+                    <tr>
+                      <td>${budget.BudgetID}</td>
+                      <td>${budget.DepartmentID}</td>
+                      <td>${budget.AllocatedAmount}</td>
+                      <td>${budget.SpentAmount}</td>
+                      <td>${budget.RemainingAmount}</td>
+                      <td class="actions-cell">
+                        <button onclick="updateBudget(${budget.BudgetID})">Update</button>
+                      </td>
+                    </tr>
+                  `;
+                  tableBody.innerHTML += row;
+                });
+              }
+            })
+            .catch((error) => console.error("Error fetching budgets:", error));
+        }
+
+        // Function to update a specific budget
+        window.updateBudget = function (budgetID) {
+          const newAllocatedAmount = prompt("Enter new Allocated Amount:");
+          const newSpentAmount = prompt("Enter new Spent Amount:");
+
+          // Calculate the remaining amount
+          const newRemainingAmount = (
+            parseFloat(newAllocatedAmount) - parseFloat(newSpentAmount)
+          ).toFixed(2);
+
+          // Update the budget on the server
+          fetch(`/finance-team/budgets/${budgetID}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              AllocatedAmount: newAllocatedAmount,
+              SpentAmount: newSpentAmount,
+              RemainingAmount: newRemainingAmount,
+            }),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to update budget");
+              }
+              return response.json();
+            })
+            .then((message) => {
+              alert(message.message);
+              fetchBudgets(); // Re-fetch and re-render budgets after update
+            })
+            .catch((error) => console.error("Error updating budget:", error));
+        };
+
+        // Fetch and display purchase orders
+        fetch("/finance-team/approved-purchase-orders")
+          .then((response) => response.json())
+          .then((purchaseOrders) => {
+            const tableBody = document.querySelector(
+              "#purchaseOrderTable tbody"
+            );
+            tableBody.innerHTML = ""; // Clear any existing rows
+
+            if (purchaseOrders.length === 0) {
+              tableBody.innerHTML =
+                "<tr><td colspan='6' class='no-data'>No approved purchase orders found.</td></tr>";
+            } else {
+              purchaseOrders.forEach((po) => {
+                const row = `
+                  <tr>
+                    <td>${po.POID}</td>
+                    <td>${po.VendorID}</td>
+                    <td>${po.DepartmentID}</td>
+                    <td>${po.TotalCost}</td>
+                    <td>${po.OrderStatus}</td>
+                    <td class="actions-cell">
+                      <button onclick="markAsFulfilled(${po.POID})">Mark as Fulfilled</button>
+                    </td>
+                  </tr>
+                `;
+                tableBody.innerHTML += row;
+              });
+            }
+          })
+          .catch((error) =>
+            console.error("Error fetching purchase orders:", error)
+          );
+      });
+
+      // Function to mark a purchase order as fulfilled
+      function markAsFulfilled(poID) {
+        fetch(`/finance-team/purchase-orders/mark-fulfilled/${POID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            OrderStatus: "Fulfilled",
+          }),
+        })
+          .then((response) => response.json())
+          .then((message) => {
+            alert(message);
+            location.reload(); // Reload to see the updated status
+          })
+          .catch((error) =>
+            console.error("Error marking purchase order as fulfilled:", error)
+          );
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #5cb8ff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    section {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    button {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #5cb8ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #5cb8ff;
+      color: white;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Vendor Dashboard</h1>
+    <p>Manage purchase orders, contracts, compliance, and performance.</p>
+  </header>
+
+  <main>
+    <!-- Purchase Orders -->
+    <section>
+      <h2>Purchase Orders</h2>
+      <button onclick="toggleSection('purchaseOrdersTable', fetchPurchaseOrders)">Toggle Purchase Orders</button>
+      <table id="purchaseOrdersTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>POID</th>
+            <th>Item Details</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Contracts -->
+    <section>
+      <h2>Contracts</h2>
+      <button onclick="toggleSection('contractsTable', fetchContracts)">Toggle Contracts</button>
+      <table id="contractsTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Contract ID</th>
+            <th>Department ID</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Terms</th>
+            <th>Special Clauses</th>
+            <th>Renewal Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Compliance -->
+    <section>
+      <h2>Compliance</h2>
+      <form id="complianceForm">
+        <label for="complianceCertificates">Upload Compliance Certificates (JSON Format):</label>
+        <textarea id="complianceCertificates" name="complianceCertificates" placeholder='{"ISO": "9001"}' required></textarea>
+        <button type="submit">Upload Certificates</button>
+      </form>
+    </section>
+
+    <!-- Performance -->
+    <section>
+      <h2>Performance</h2>
+      <button onclick="toggleSection('performanceTable', fetchPerformance)">Toggle Performance</button>
+      <table id="performanceTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Delivery Timeliness</th>
+            <th>Service Quality</th>
+            <th>Compliance Score</th>
+            <th>Evaluation Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Notifications -->
+    <section>
+      <h2>Notifications</h2>
+      <button onclick="toggleSection('notificationsTable', fetchNotifications)">Toggle Notifications</button>
+      <table id="notificationsTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Message</th>
+            <th>Read Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const VendorID = 1; // Replace with dynamic VendorID
+    const RecipientID = 1; // Replace with dynamic RecipientID
+
+    function toggleSection(sectionId, fetchFunction) {
+      const section = document.getElementById(sectionId);
+      if (section.style.display === "none") {
+        section.style.display = "table";
+        if (fetchFunction) fetchFunction();
+      } else {
+        section.style.display = "none";
+      }
+    }
+
+    function fetchPurchaseOrders() {
+      fetch(`/vendor/purchase-orders?VendorID=${VendorID}`)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById("purchaseOrdersTable");
+          const tbody = table.querySelector("tbody");
+          tbody.innerHTML = data
+            .map(
+              po => `
+                <tr>
+                  <td>${po.POID}</td>
+                  <td>${JSON.stringify(po.ItemDetails)}</td>
+                  <td>${po.TotalCost}</td>
+                  <td>${po.OrderStatus}</td>
+                  <td>${po.CreatedAt}</td>
+                  <td>
+                    <button onclick="updatePOStatus(${po.POID}, 'Accepted')">Accept</button>
+                    <button onclick="updatePOStatus(${po.POID}, 'Declined')">Decline</button>
+                  </td>
+                </tr>
+              `
+            )
+            .join("");
+        })
+        .catch(err => console.error("Error fetching POs:", err));
+    }
+
+    function fetchContracts() {
+      fetch(`/vendor/contracts?VendorID=${VendorID}`)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById("contractsTable");
+          const tbody = table.querySelector("tbody");
+          tbody.innerHTML = data
+            .map(
+              contract => `
+                <tr>
+                  <td>${contract.ContractID}</td>
+                  <td>${contract.DepartmentID}</td>
+                  <td>${contract.StartDate}</td>
+                  <td>${contract.EndDate}</td>
+                  <td>${contract.TermsAndConditions}</td>
+                  <td>${contract.SpecialClauses}</td>
+                  <td>${contract.RenewalDate}</td>
+                </tr>
+              `
+            )
+            .join("");
+        })
+        .catch(err => console.error("Error fetching contracts:", err));
+    }
+
+    document.getElementById("complianceForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const complianceCertificates = document.getElementById("complianceCertificates").value;
+
+      fetch("/vendor/compliance/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ VendorID, ComplianceCertificates: JSON.parse(complianceCertificates) }),
+      })
+        .then(res => res.json())
+        .then(data => alert(data.message))
+        .catch(err => console.error("Error uploading compliance certificates:", err));
+    });
+
+    function fetchPerformance() {
+      fetch(`/vendor/performance?VendorID=${VendorID}`)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById("performanceTable");
+          const tbody = table.querySelector("tbody");
+          tbody.innerHTML = data
+            .map(
+              performance => `
+                <tr>
+                  <td>${performance.DeliveryTimelinessScore}</td>
+                  <td>${performance.ServiceQualityScore}</td>
+                  <td>${performance.ComplianceScore}</td>
+                  <td>${performance.EvaluationDate}</td>
+                </tr>
+              `
+            )
+            .join("");
+        })
+        .catch(err => console.error("Error fetching performance:", err));
+    }
+
+    function fetchNotifications() {
+      fetch(`/vendor/notifications?RecipientID=${RecipientID}`)
+        .then(res => res.json())
+        .then(data => {
+          const table = document.getElementById("notificationsTable");
+          const tbody = table.querySelector("tbody");
+          tbody.innerHTML = data
+            .map(
+              notification => `
+                <tr>
+                  <td>${notification.NotificationType}</td>
+                  <td>${notification.Message}</td>
+                  <td>${notification.IsRead ? "Read" : "Unread"}</td>
+                  <td>${notification.CreatedAt}</td>
+                </tr>
+              `
+            )
+            .join("");
+        })
+        .catch(err => console.error("Error fetching notifications:", err));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vendor Registration</title>
+</head>
+<body>
+  <h1>Vendor Registration</h1>
+  <form action="/register-vendor" method="POST">
+    <label for="Name">Vendor Name:</label><br>
+    <input type="text" id="Name" name="Name" required><br><br>
+
+    <label for="ServiceCategories">Service Categories:</label><br>
+    <input type="text" id="ServiceCategories" name="ServiceCategories" required><br><br>
+
+    <label for="ContactInfo">Contact Info:</label><br>
+    <input type="text" id="ContactInfo" name="ContactInfo" required><br><br>
+
+    <label for="ComplianceCertifications">Compliance Certifications:</label><br>
+    <input type="text" id="ComplianceCertifications" name="ComplianceCertifications" required><br><br>
+
+    <label for="PerformanceRating">Performance Rating (1-5):</label><br>
+    <input type="number" id="PerformanceRating" name="PerformanceRating" min="1" max="5" required><br><br>
+
+    <label for="RegistrationDate">Registration Date:</label><br>
+    <input type="date" id="RegistrationDate" name="RegistrationDate" required><br><br>
+
+    <button type="submit">Register Vendor</button>
+  </form>
+</body>
+</html>

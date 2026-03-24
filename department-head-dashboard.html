@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Head Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #5cb8ff;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    section {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    button {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #5cb8ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    th {
+      background-color: #5cb8ff;
+      color: white;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #888;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Department Head Dashboard</h1>
+    <p>Manage budgets, purchase orders, tasks, and generate reports.</p>
+  </header>
+
+  <main>
+    <!-- Budget Overview -->
+    <section>
+      <h2>Budget Overview</h2>
+      <button onclick="fetchBudget()">View Budget Details</button>
+      <table id="budgetTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Budget ID</th>
+            <th>Department ID</th>
+            <th>Allocated Amount</th>
+            <th>Spent Amount</th>
+            <th>Remaining Amount</th>
+            <th>Updated By</th>
+            <th>Last Updated</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <h3>Request Budget Change</h3>
+      <form id="budgetRequestForm">
+        <label for="RequestedAmount">Requested Amount:</label>
+        <input type="number" id="RequestedAmount" required>
+        <button type="submit">Submit Request</button>
+      </form>
+    </section>
+
+    <!-- Purchase Orders -->
+    <section>
+      <h2>Purchase Orders</h2>
+      <button onclick="fetchPurchaseOrders()">View Purchase Orders</button>
+      <table id="purchaseOrdersTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>POID</th>
+            <th>Vendor ID</th>
+            <th>Created By</th>
+            <th>Department ID</th>
+            <th>Item Details</th>
+            <th>Total Cost</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Task Management -->
+    <section>
+      <h2>Task Management</h2>
+      <button onclick="fetchTasks()">View Tasks</button>
+      <table id="tasksTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Task ID</th>
+            <th>Assigned To</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Related POID</th>
+            <th>Due Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Reports -->
+    <section>
+      <h2>Reports</h2>
+      <button onclick="generateReports()">Generate Reports</button>
+      <table id="reportsTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Vendor Name</th>
+            <th>Delivery Timeliness</th>
+            <th>Service Quality</th>
+            <th>Compliance</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <script>
+      // Fetch Budget Details
+      function fetchBudget() {
+        fetch(`/dept-head/budget?DepartmentID=1`)
+          .then(response => response.json())
+          .then(data => {
+            const table = document.getElementById("budgetTable");
+            const tbody = table.querySelector("tbody");
+            table.style.display = "table";
+            tbody.innerHTML = data.map(row => `
+              <tr>
+                <td>${row.BudgetID}</td>
+                <td>${row.DepartmentID}</td>
+                <td>${row.AllocatedAmount}</td>
+                <td>${row.SpentAmount}</td>
+                <td>${row.RemainingAmount}</td>
+                <td>${row.UpdatedBy}</td>
+                <td>${row.LastUpdated}</td>
+              </tr>
+            `).join("");
+          })
+          .catch(err => alert("Error fetching budget: " + err));
+      }
+
+      // Submit Budget Change Request
+      document.getElementById("budgetRequestForm").addEventListener("submit", event => {
+        event.preventDefault();
+        const RequestedAmount = document.getElementById("RequestedAmount").value;
+
+        fetch("/dept-head/budget/request-change", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ DepartmentID: 1, RequestedAmount, UserID: 4 }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            document.getElementById("RequestedAmount").value = "";
+          })
+          .catch(err => alert("Error submitting budget change request: " + err));
+      });
+
+      // Fetch Purchase Orders
+      function fetchPurchaseOrders() {
+        fetch(`/dept-head/purchase-orders?DepartmentID=1`)
+          .then(response => response.json())
+          .then(data => {
+            const table = document.getElementById("purchaseOrdersTable");
+            const tbody = table.querySelector("tbody");
+            table.style.display = "table";
+            tbody.innerHTML = data.map(row => `
+              <tr>
+                <td>${row.POID}</td>
+                <td>${row.VendorID}</td>
+                <td>${row.CreatedBy}</td>
+                <td>${row.DepartmentID}</td>
+                <td>${JSON.stringify(row.ItemDetails)}</td>
+                <td>${row.TotalCost}</td>
+                <td>${row.OrderStatus}</td>
+                <td>
+                  <button onclick="updatePOStatus(${row.POID}, 'Approved')">Approve</button>
+                  <button onclick="updatePOStatus(${row.POID}, 'Rejected')">Reject</button>
+                </td>
+              </tr>
+            `).join("");
+          })
+          .catch(err => alert("Error fetching purchase orders: " + err));
+      }
+
+      // Update Purchase Order Status
+      function updatePOStatus(POID, status) {
+        fetch("/dept-head/purchase-orders/decision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ POID, Decision: status }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            fetchPurchaseOrders();
+          })
+          .catch(err => alert("Error updating PO status: " + err));
+      }
+
+      // Fetch Tasks
+      function fetchTasks() {
+        fetch(`/dept-head/tasks?DepartmentID=1`)
+          .then(response => response.json())
+          .then(data => {
+            const table = document.getElementById("tasksTable");
+            const tbody = table.querySelector("tbody");
+            table.style.display = "table";
+            tbody.innerHTML = data.map(row => `
+              <tr>
+                <td>${row.TaskID}</td>
+                <td>${row.AssignedTo}</td>
+                <td>${row.TaskDescription}</td>
+                <td>${row.Status}</td>
+                <td>${row.RelatedPOID}</td>
+                <td>${row.DueDate}</td>
+                <td>
+                  <button onclick="updateTaskStatus(${row.TaskID}, 'Completed')">Complete</button>
+                </td>
+              </tr>
+            `).join("");
+          })
+          .catch(err => alert("Error fetching tasks: " + err));
+      }
+
+      // Update Task Status
+      function updateTaskStatus(TaskID, status) {
+        fetch("/dept-head/tasks/update", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ TaskID, Status: status }),
+        })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message);
+            fetchTasks();
+          })
+          .catch(err => alert("Error updating task status: " + err));
+      }
+
+      // Generate Reports
+      function generateReports() {
+        fetch(`/dept-head/reports?DepartmentID=1`)
+          .then(response => response.json())
+          .then(data => {
+            const table = document.getElementById("reportsTable");
+            const tbody = table.querySelector("tbody");
+            table.style.display = "table";
+            tbody.innerHTML = data.map(row => `
+              <tr>
+                <td>${row.VendorName}</td>
+                <td>${row.DeliveryTimelinessScore}</td>
+                <td>${row.ServiceQualityScore}</td>
+                <td>${row.ComplianceScore}</td>
+              </tr>
+            `).join("");
+          })
+          .catch(err => alert("Error generating reports: " + err));
+      }
+    </script>
+  </main>
+</body>
+</html>
