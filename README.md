@@ -1,27 +1,64 @@
 # VendorCorp Website
 
-VendorCorp Website is a database systems semester project that combines a multi-page HTML/CSS frontend with Node.js and MySQL backend scripts for vendor management workflows.
+VendorCorp Website is an academic full-stack database systems project for managing vendors, users, purchase orders, contracts, budgets, compliance records, and notifications.
 
-## Stack
+The project combines a MySQL database schema, an Express.js backend, and multiple role-based dashboard pages for different users in the procurement workflow.
 
-- HTML
-- CSS
-- JavaScript
+## Core Modules
+
+- User registration and login
+- Vendor onboarding
+- Role-based dashboard routing
+- Purchase order tracking
+- Contract management
+- Budget monitoring
+- Compliance audit records
+- Notifications and task handling
+
+## Roles Covered
+
+- Vendor
+- Vendor Team
+- Procurement Manager
+- Contract Team
+- Department Head
+- Finance Team
+
+## Tech Stack
+
 - Node.js
-- Express
+- Express.js
 - MySQL
+- HTML/CSS/JavaScript
 
-## Contents
+## Main Files
 
-- Dashboard pages for different user roles
-- SQL schema and seed script in `sql_script.sql`
-- Backend scripts such as `user.js`, `user_reg.js`, `dummy.js`, and `vendormanagement.js`
-- `package.json` and `package-lock.json` for Node dependencies
+- `user_reg.js` - primary backend application
+- `sql_script.sql` - database schema and seed data
+- dashboard HTML files - role-based frontends
+- `package.json` - project dependencies
 
-## Quick Start
+## Setup
 
 ```bash
 npm install
+node user_reg.js
 ```
 
-Then review the backend scripts and HTML entry pages to run the specific workflow you want to test.
+Then open:
+
+```text
+http://localhost:8080
+```
+
+## Database Setup
+
+1. Create the database using `sql_script.sql`
+2. Update the MySQL connection settings in `user_reg.js`
+3. Make sure the database name and credentials match your local environment
+
+## Notes
+
+- `user_reg.js` appears to be the main runnable backend file in this repository
+- Some files in the repo are alternate or earlier versions of the project flow
+- This is an academic prototype and is not production-hardened for security, sessions, or deployment
