@@ -62,3 +62,10 @@ http://localhost:8080
 - `user_reg.js` appears to be the main runnable backend file in this repository
 - Some files in the repo are alternate or earlier versions of the project flow
 - This is an academic prototype and is not production-hardened for security, sessions, or deployment
+
+## Team
+
+This project was completed as a group project.
+
+- Abdullah Sipra
+- Saad Ahmad Khan (https://github.com/saadK3)
